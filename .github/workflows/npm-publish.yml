@@ -1,0 +1,38 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main # Set this to the name of your default branch
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Prevents the workflow from running on version bump commits
+    if: "!contains(github.event.head_commit.message, 'Bump version to')"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Ensures history is available for versioning
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run prepare
+
+      - name: Push Changes
+        run: git push origin HEAD:main
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
