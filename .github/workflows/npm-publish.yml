@@ -29,9 +29,6 @@ jobs:
       - name: Build
         run: npm run prepare
 
-      - name: Push Changes
-        run: git push origin HEAD:main
-
       - name: Publish to npm
         run: npm publish
         env:
